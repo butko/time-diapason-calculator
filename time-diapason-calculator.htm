@@ -1,0 +1,108 @@
+<style>
+body {
+    padding: 20px;
+}
+h1 {
+    padding: 20px 0;
+}
+.result {
+    padding: 50px 0;
+}
+label {
+	display:block;
+	padding:10px 0;
+}
+input {
+	display:block;
+}
+.go {
+    padding:20px;
+    background: green;
+    color: #FFFFFF;
+    width: auto;
+    cursor: pointer;
+    display: inline-block;
+}
+</style>
+
+<h1>Генерация равномерного диапазона времени</h1>
+
+<form>
+<label>
+Введите время первого события, например, 9:00
+<input type=text name="start" class="start" />
+</label>
+<label>
+Введите время последнего события, например, 18:00
+<input type=text name="end" class="end" />
+</label>
+<label>
+Введите количество событий
+<input type=text name="count" class="count" />
+</label>
+</form>
+<p><span class="go">Сгенерировать</span>
+
+<div class="result"></div>
+
+<script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+<script>
+function calc() {
+	
+	function hours(t) {
+		num = parseInt(t / 60);
+		if (Math.round(t % 60) == 60) {
+			num = num + 1;
+		}
+		if (num < 10) {
+			num = '0' + num;
+		}
+		return num;
+	}
+	function minutes(t) {
+		var num = Math.round(t % 60);
+		if (num < 10) {
+			num = '0' + num;
+		}
+		if (num == 60) {
+			num = '00';
+		}
+		return num;
+	}
+	
+	var arr_start = $('.start').val().split(':');
+	var arr_end = $('.end').val().split(':');
+	var publications_count = parseInt($('.count').val());
+	var minutes_count =(parseInt(arr_end[0])-parseInt(arr_start[0]))*60+parseInt(arr_start[1])+parseInt(arr_end[1]);
+	var minutes_interval = minutes_count / (publications_count-1);
+	
+	$('.result').empty();
+	$('.result').append('<b>Время первого события:</b> ', arr_start[0], ' часов ', arr_start[1], ' минут ');
+	$('.result').append('<br>');
+	
+	$('.result').append('<b>Время последнего события:</b> ', arr_end[0], ' часов ', arr_end[1], ' минут ');
+	$('.result').append('<br>');
+	
+	$('.result').append('<b>Все события продлятся:</b> ', hours(minutes_count), ' часов ', minutes(minutes_count), ' минут ');
+	$('.result').append('<br>');
+	
+	$('.result').append('<b>Количество событий:</b> ');
+	$('.result').append($('.count').val());
+	$('.result').append('<br>');
+	
+	$('.result').append('<b>Минут на каждое событие:</b> ');
+	$('.result').append(minutes_interval);
+	$('.result').append('<br>');
+	
+	$('.result').append('<h1>График:</h1>');
+
+	var publication_time = parseInt(arr_start[0])*60+parseInt(arr_start[1]);
+	for (i = 1; i < publications_count+1; i++) {
+		$('.result').append('<p>',hours(publication_time), ':', minutes(publication_time));
+		publication_time = publication_time + minutes_interval; 
+	}
+}
+
+$('.go').on('click', function(e) {calc();});
+// $( "input").on('input keyup', function(e) {calc();});
+</script>
